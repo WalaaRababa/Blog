@@ -18,4 +18,8 @@ export class AuthServiceService {
  login(userInfo:loginDto):Observable<string>{
   return this.http.post<string>(this.url+'login',userInfo)
  }
+ isLoggedIn(){
+  const token=localStorage.getItem("token")
+  return token?true:false
+ }
 }

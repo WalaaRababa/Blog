@@ -1,7 +1,7 @@
 const Article = require("../models/article");
 const Comment=require("../models/comments")
 const getAllArticle = (req, res) => {
-  Article.find({})
+  Article.find({}).populate('author','comments').exec()
     .then((result) => {
       res.status(200).json({
         message: "all article",
@@ -33,7 +33,7 @@ const getArticleById = (req, res) => {
 };
 const getArticleByAuthorId = (req, res) => {
   const { id } = req.params;
-  Article.find({ idAuthor: id })
+  Article.find({ author: id })
     .then((result) => {
       if (result.length == 0) {
         res.status(200).json({
