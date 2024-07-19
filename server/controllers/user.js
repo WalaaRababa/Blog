@@ -10,11 +10,17 @@ const register = (req, res) => {
     .save()
     .then((result) => {
       res.status(201).json({
-        message: "done",
+        message: "user account created successfully ",
         user: result,
       });
     })
     .catch((err) => {
+      if (err.keyPattern) {
+        return res.status(409).json({
+          success: false,
+          message: `The email already existed`,
+        });
+      }
       res.status(500).json({
         message: "server error",
         error: err,
