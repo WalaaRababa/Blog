@@ -3,7 +3,7 @@ import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CreateArticleComponent } from './create-article/create-article.component';
-import { MyprofileComponent } from './myprofile/myprofile.component';
+import { MyProfileComponent } from './my-profile/my-profile.component';
 
 export const routes: Routes = [
     {path:'',redirectTo:'/register',pathMatch:'full'},
@@ -11,7 +11,7 @@ export const routes: Routes = [
     {path:'login',component:LoginComponent},
     {path:'home',component:DashboardComponent},
     {path:'create',component:CreateArticleComponent},
-    {path:'profile',component:MyprofileComponent}
+    {path:'author/:id',component:MyProfileComponent}
 
 
 

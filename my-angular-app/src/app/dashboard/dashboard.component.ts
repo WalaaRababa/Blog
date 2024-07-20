@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
-  article = signal<Article[]>([])
+  articles = signal<Article[]>([])
   constructor(private articleService: ArticleServiceService) { }
   ngOnInit(): void {
     this.getAllArticle()
@@ -21,7 +21,7 @@ export class DashboardComponent implements OnInit {
     this.articleService.getAllArticle().subscribe((res) => {
       console.log(res);
       const articles = (res as any).articles
-      this.article.set(articles)
+      this.articles.set(articles)
     }, error => {
       console.log(error);
 

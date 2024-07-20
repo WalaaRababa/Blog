@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import Article from '../../interface/article';
 
@@ -14,8 +14,10 @@ export class ArticleServiceService {
 getAllArticle(){
   return this.http.get<Article[]>(this.url)
 }
-getMyArticle(){
-  return this.http.get<Article[]>(this.url)
-
+getMyArticle(authorId:string|null){
+  return this.http.get<Article[]>(this.url+'searchBy/'+authorId)
+}
+createArticle(article:FormData,headers:HttpHeaders):Observable<any>{
+  return this.http.post(this.url,article,{headers})
 }
 }

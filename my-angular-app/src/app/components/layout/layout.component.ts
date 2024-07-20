@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthServiceService } from '../../services/auth-service.service';
 
 @Component({
   selector: 'app-layout',
@@ -11,9 +12,13 @@ import { RouterLink } from '@angular/router';
 })
 export class LayoutComponent {
   menuOpen = false;
-
+constructor( public auth :AuthServiceService,private router :Router){}
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
-  logout(){}
+  logout(){
+    localStorage.removeItem("token")
+    this.router.navigate(['/login'])
+
+  }
 }
