@@ -7,6 +7,7 @@ const {
   getArticleByAuthorId,
   createNewComment,
   replyOnComment,
+  getAllReply,
 } = require("../controllers/article");
 const authentication = require("../middleware/authentication");
 const articleRouter = express.Router();
@@ -75,4 +76,5 @@ articleRouter.get("/:id", getArticleById);
 articleRouter.get("/searchBy/:id", getArticleByAuthorId);
 articleRouter.post("/:id/comments",authentication,createNewComment)
 articleRouter.patch("/reply/comments/:commentId",authentication,replyOnComment)
+articleRouter.get('/all/reply/:parentId',getAllReply)
 module.exports = articleRouter;

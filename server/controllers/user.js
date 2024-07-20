@@ -62,5 +62,20 @@ const login=async(req, res) => {
       });
     }
   }
-
-module.exports={register,login}
+  const getUserById = (req, res) => {
+    const { id } = req.params;
+    User.findById(id)
+      .then((result) => {
+        res.status(200).json({
+          message: `user that has id =>${id}`,
+          user: result,
+        });
+      })
+      .catch((err) => {
+        res.status(500).json({
+          message: "server error",
+          error: err,
+        });
+      });
+  };
+module.exports={register,login,getUserById}

@@ -31,5 +31,7 @@ export class AuthServiceService {
     }
     
   }
-
+  getInfo(userId:string): Observable<any> {
+    return this.http.get<any>(this.url+`${userId}`)
+  }
 }

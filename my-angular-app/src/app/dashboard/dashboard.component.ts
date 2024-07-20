@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 })
 export class DashboardComponent implements OnInit {
   articles = signal<Article[]>([])
+  isExpanding=signal(false)
   constructor(private articleService: ArticleServiceService) { }
   ngOnInit(): void {
     this.getAllArticle()
@@ -27,4 +28,5 @@ export class DashboardComponent implements OnInit {
 
     })
   }
+
 }

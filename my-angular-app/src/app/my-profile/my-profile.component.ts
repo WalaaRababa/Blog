@@ -4,6 +4,8 @@ import { ArticleServiceService } from '../services/article-service.service';
 import Article from '../../interface/article';
 import { CommonModule } from '@angular/common';
 import { ArticleComponent } from '../components/article/article.component';
+import { AuthServiceService } from '../services/auth-service.service';
+import User from '../../interface/user';
 
 @Component({
   selector: 'app-my-profile',
@@ -16,16 +18,30 @@ export class MyProfileComponent {
   id: string | null = ''
   errorMessage = signal<string>('')
   articles=signal<Article[]>([])
-  constructor(private articleService: ArticleServiceService, private act: ActivatedRoute) { }
+  user=signal<User>({firstName:'',lastName:'',email:'',password:''})
+  constructor(private articleService: ArticleServiceService, private act: ActivatedRoute,private auth:AuthServiceService) { }
   ngOnInit(): void {
     this.id = this.act.snapshot.paramMap.get('id')
     this.getMyArticle()
+    if (this.id !== null) {
+      this.getMyInfo(this.id);
+  } 
   }
   getMyArticle() {
     this.articleService.getMyArticle(this.id).subscribe((res) => {
       console.log(res);
       const articles = (res as any).articles
       this.articles.set(articles)
+    }, error => {
+      console.log(error);
+      this.errorMessage.set(error.message)
+    })
+  }
+  getMyInfo(userId:string)
+  {
+    this.auth.getInfo(userId).subscribe((res) => {
+      console.log(res);
+      this.user.set(res.user)
     }, error => {
       console.log(error);
       this.errorMessage.set(error.message)

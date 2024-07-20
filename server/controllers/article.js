@@ -1,7 +1,13 @@
 const Article = require("../models/article");
 const Comment=require("../models/comments")
 const getAllArticle = (req, res) => {
-  Article.find({}).populate('author','comments').exec()
+  Article.find({}).populate('author').populate({
+    path: 'comments',
+    populate: [
+      { path: 'commenter', model: 'User' },
+      { path: 'parentId', model: 'Comment' }
+    ]
+  }).exec()
     .then((result) => {
       res.status(200).json({
         message: "all article",
@@ -33,7 +39,7 @@ const getArticleById = (req, res) => {
 };
 const getArticleByAuthorId = (req, res) => {
   const { id } = req.params;
-  Article.find({ author: id })
+  Article.find({ author: id }).populate('author').populate('comments').exec()
     .then((result) => {
       if (result.length == 0) {
         res.status(200).json({
@@ -77,16 +83,18 @@ const createNewComment = (req, res) => {
     comment,
     commenter,
   });
+
   newComment
     .save()
     .then((result) => {
       Article
         .updateOne({ _id: id }, { $push: { comments: result._id } })
-        .then(() => {
+        .then(async() => {
+          const newCommentPopulate = await Comment.findById(newComment._id).populate('commenter');
           res.status(201).json({
             success: true,
             message: `Comment added`,
-            comment: result,
+            comment: newCommentPopulate,
           });
         })
         .catch((err) => {
@@ -123,10 +131,33 @@ const replyOnComment = async (req, res) => {
       parentId: parentComment._id,
     });
     await reply.save();
-
+    const populatedReply = await Comment.findById(reply._id).populate('commenter');
     res.status(201).json({
       message: "Reply added",
-      reply,
+      populatedReply,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+      error: error.message
+    });
+  }
+};
+const getAllReply = async (req, res) => {
+  const { parentId } = req.params;
+
+  try {
+    const parentComment = await Comment.find({parentId}).populate('commenter').exec()
+    if (!parentComment) {
+      return res.status(404).json({
+        success: false,
+        message: "Parent comment not found",
+      });
+    }
+    res.status(200).json({
+      message: "all reply",
+      parentComment,
     });
   } catch (error) {
     res.status(500).json({
@@ -142,5 +173,6 @@ module.exports = {
   getArticleById,
   deleteArticleByID,
   createNewComment,
-  replyOnComment
+  replyOnComment,
+  getAllReply
 };

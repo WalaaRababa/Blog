@@ -20,4 +20,13 @@ getMyArticle(authorId:string|null){
 createArticle(article:FormData,headers:HttpHeaders):Observable<any>{
   return this.http.post(this.url,article,{headers})
 }
+createCommentByArticle(id:string,comment:string,headers:HttpHeaders):Observable<any>{
+  return this.http.post(this.url+`${id}/comments`,{comment},{headers})
+}
+createReplyOnComment(commentId:string,comment:string,headers:HttpHeaders):Observable<any>{
+  return this.http.patch(this.url+`reply/comments/${commentId}`,{comment},{headers})
+}
+showRepliesOnComment(parentId:string):Observable<any>{
+  return this.http.get(this.url+`all/reply/${parentId}`)
+}
 }
