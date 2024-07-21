@@ -21,6 +21,13 @@ This is a full-stack blog application built with Node.js, MongoDB, and Angular. 
 
 - 🌀 Clone the repository: `git clone https://github.com/WalaaRababa/Blog`
 - 📦 Install dependencies: `npm install`
+- Create a .env file in the backend directory and add your MongoDB URI and other environment variables:
+```sh
+  DBUrl=mongodb://localhost:27017/blog
+  SECRET=your_jwt_secret
+  
+
+  ```
 - ▶️ Start the servers: `npm run dev`
  - ▶️ Start the frontend: `ng s`
 
