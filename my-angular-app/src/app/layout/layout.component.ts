@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthServiceService } from '../../services/auth-service.service';
+import { AuthServiceService } from '../services/auth-service.service';
 
 @Component({
   selector: 'app-layout',

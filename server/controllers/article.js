@@ -1,10 +1,13 @@
 const Article = require("../models/article");
 const Comment=require("../models/comments")
 const getAllArticle = (req, res) => {
-  Article.find({}).populate('author').populate({
+  Article.find({}).populate({
+    path: 'author',
+    select: '-password'
+  }).populate({
     path: 'comments',
     populate: [
-      { path: 'commenter', model: 'User' },
+      { path: 'commenter', model: 'User' , select: '-password'},
       { path: 'parentId', model: 'Comment' }
     ]
   }).exec()
@@ -39,7 +42,10 @@ const getArticleById = (req, res) => {
 };
 const getArticleByAuthorId = (req, res) => {
   const { id } = req.params;
-  Article.find({ author: id }).populate('author').populate('comments').exec()
+  Article.find({ author: id }).populate({
+    path: 'author',
+    select: '-password'
+  }).populate('comments').exec()
     .then((result) => {
       if (result.length == 0) {
         res.status(200).json({
@@ -90,7 +96,7 @@ const createNewComment = (req, res) => {
       Article
         .updateOne({ _id: id }, { $push: { comments: result._id } })
         .then(async() => {
-          const newCommentPopulate = await Comment.findById(newComment._id).populate('commenter');
+          const newCommentPopulate = await Comment.findById(newComment._id).populate(    { path: 'commenter', select: '-password'})
           res.status(201).json({
             success: true,
             message: `Comment added`,
@@ -131,7 +137,7 @@ const replyOnComment = async (req, res) => {
       parentId: parentComment._id,
     });
     await reply.save();
-    const populatedReply = await Comment.findById(reply._id).populate('commenter');
+    const populatedReply = await Comment.findById(reply._id).populate( { path: 'commenter', select: '-password'});
     res.status(201).json({
       message: "Reply added",
       populatedReply,
@@ -148,7 +154,7 @@ const getAllReply = async (req, res) => {
   const { parentId } = req.params;
 
   try {
-    const parentComment = await Comment.find({parentId}).populate('commenter').exec()
+    const parentComment = await Comment.find({parentId}).populate({ path: 'commenter', select: '-password'}).exec()
     if (!parentComment) {
       return res.status(404).json({
         success: false,

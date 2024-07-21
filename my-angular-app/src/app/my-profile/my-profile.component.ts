@@ -1,11 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ArticleServiceService } from '../services/article-service.service';
 import Article from '../../interface/article';
 import { CommonModule } from '@angular/common';
-import { ArticleComponent } from '../components/article/article.component';
+import { ArticleComponent } from '../shared-components/article/article.component'
 import { AuthServiceService } from '../services/auth-service.service';
 import User from '../../interface/user';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-my-profile',
@@ -14,7 +15,9 @@ import User from '../../interface/user';
   templateUrl: './my-profile.component.html',
   styleUrl: './my-profile.component.css'
 })
-export class MyProfileComponent {
+export class MyProfileComponent implements OnDestroy {
+  private subscription = new Subscription();
+
   id: string | null = ''
   errorMessage = signal<string>('')
   articles=signal<Article[]>([])
@@ -28,7 +31,7 @@ export class MyProfileComponent {
   } 
   }
   getMyArticle() {
-    this.articleService.getMyArticle(this.id).subscribe((res) => {
+    const articlesSubscription = this.articleService.getMyArticle(this.id).subscribe((res) => {
       console.log(res);
       const articles = (res as any).articles
       this.articles.set(articles)
@@ -36,6 +39,8 @@ export class MyProfileComponent {
       console.log(error);
       this.errorMessage.set(error.message)
     })
+    this.subscription.add(articlesSubscription);
+
   }
   getMyInfo(userId:string)
   {
@@ -46,5 +51,8 @@ export class MyProfileComponent {
       console.log(error);
       this.errorMessage.set(error.message)
     })
+  }
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

@@ -1,8 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnDestroy, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ArticleServiceService } from '../services/article-service.service';
 import { HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 type ArticleDto = {
   title: string;
   content: string;
@@ -14,11 +15,13 @@ type ArticleDto = {
   templateUrl: './create-article.component.html',
   styleUrls: ['./create-article.component.css']
 })
-export class CreateArticleComponent {
+export class CreateArticleComponent implements OnDestroy {
   newArticle: ArticleDto = {
     title: '',
     content: '',
   };
+  private subscription = new Subscription();
+
   image: File | null = null;
   message = signal<string>('')
   constructor(private articleService: ArticleServiceService) { }
@@ -42,7 +45,7 @@ export class CreateArticleComponent {
       'Authorization': `Bearer ${token}`
     });
 
-    this.articleService.createArticle(formData, headers).subscribe(
+    const articlesSubscription = this.articleService.createArticle(formData, headers).subscribe(
       res => {
         console.log(res);
         this.message.set(res.message)
@@ -51,8 +54,15 @@ export class CreateArticleComponent {
         console.log(error);
       }
     );
+
+    this.subscription.add(articlesSubscription);
   }
+
   hidePopup() {
     this.message.set('')
+  }
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+
   }
 }
